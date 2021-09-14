@@ -18,15 +18,16 @@
         <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="{% static 'css/base.css' %}">
     {% endblock %}
-
+S
     {% block extra_css %}
     {% endblock %}
 
     {% block corejs %}
+        <script src="https://kit.fontawesome.com/230f1c1834.js" crossorigin="anonymous"></script>   
         <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-        <script src="https://kit.fontawesome.com/230f1c1834.js" crossorigin="anonymous"></script>
+        
     {% endblock %}
 
     {% block extra_js %}
@@ -117,17 +118,36 @@
 
       </header>
 
-      {% if messages %}
-      <div class="message-container"></div>
-      {% endif %}
+    {% if messages %}
+      <div class="message-container">
+        <!--Django has a message that are called levels represented by integer number-->
+        {% for message in messages %}
+             {% with message.level as level %}
+                {% if level == 40 %}<!--this is the integer number for error-->
+                   {% include 'includes/toasts/toast_error.html' %}
+                {% elif level == 30 %}
+                   {% include 'includes/toasts/toast_warning.html' %}
+                {% elif level == 25 %}
+                   {% include 'includes/toasts/toast_success.html' %}
+                {% else %}
+                   {% include 'includes/toasts/toast_info.html' %}
+                {% endif %}
+            {% endwith %}
+        {% endfor %}
+      </div>
+    {% endif %}
 
-      {% block page_header %}
-      {% endblock %}
+    {% block page_header %}
+    {% endblock %}
 
-      {% block content %}
-      {% endblock %}
+    {% block content %}
+    {% endblock %}
 
-      {% block postloadjs %}
-      {% endblock %}
+    {% block postloadjs %}
+      <!--this is the function that call the bootstrap toast class and show the message-->
+      <script type="text/javascript">
+         $('.toast').toast('show');
+      </script>
+    {% endblock %}
     </body>
 </html>
