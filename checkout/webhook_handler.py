@@ -2,6 +2,7 @@ from django.http import HttpResponse
 
 from .models import Order, OrderLineItem
 from products.models import Product
+from profiles.models import UserProfile
 
 import json
 import time
@@ -39,6 +40,19 @@ class StripeWH_Handler:
                 shipping_details.address[field] = None
 # in case the form is not submitted for some reason. we put the variable order_exists to false, if the order does not go trought
 #and if the order exists return http response and webhook message in stripe
+        profile = None
+        username = intent.metadata.username
+        if username != 'AnonymousUser':
+            profile = UserProfile.objects.get(user__username=username)
+            if save_info:
+                profile.defaultphone_number__iexact = shipping_details.phone,
+                profile.defaultcountry__iexact = shipping_details.address.country,
+                profile.defaultpostcode__iexact = shipping_details.address.postal_code,
+                profile.defaulttown_or_city__iexact = shipping_details.address.city,
+                profile.defaultstreet_address1__iexact = shipping_details.address.line1,
+                profile.defaultstreet_address2__iexact = shipping_details.address.line2,
+                profile.defaultcounty__iexact = shipping_details.address.state,
+
         order_exists = False
         attempt = 1
         while attempt <= 5:
@@ -71,6 +85,7 @@ class StripeWH_Handler:
             try:
                 order = Order.objects.create(
                     full_name=shipping_details.name,
+                    user_profile=profile,
                     email=billing_details.email,
                     phone_number=shipping_details.phone,
                     country=shipping_details.address.country,
