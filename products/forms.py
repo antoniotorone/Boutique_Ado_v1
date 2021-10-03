@@ -1,0 +1,19 @@
+# this is a product form for make able the owner to update,delete, product
+from django import forms
+from .models import Product, Category
+
+
+class ProductForm(forms.ModelForm):
+#__all__ call all categories
+    class Meta:
+        model = Product
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        categories = Category.objects.all()
+        friendly_names = [(c.id, c.get_friendly_name()) for c in categories]
+# change the form field by choices the friendly name and not the id
+        self.fields['category'].choices = friendly_names
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'border-black rounded-0'
