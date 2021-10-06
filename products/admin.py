@@ -23,6 +23,8 @@ class CategoryAdmin(admin.ModelAdmin):
         'name',
     )
 
+# this is the build-in function to add these to the admin in django
+
 
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Category, CategoryAdmin)
